@@ -9,7 +9,6 @@ async function handleMentionedMessage(bot, msg) {
   
   if (mentionedMessageText) {
     console.log(`mentioned message: ${mentionedMessageText}`);
-    console.log(`msg thread: ${message_thread_id}`);
     const answer = await knowledgeSearchService.getAnswer(mentionedUserId, mentionedMessageText);
     console.log(`answer: ${answer}`);
    

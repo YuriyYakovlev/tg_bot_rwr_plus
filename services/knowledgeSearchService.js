@@ -22,9 +22,7 @@ async function getAnswer(userId, msg) {
 
   try {
     const [response] = await client.detectIntent(request);
-    
-    const answer = response.queryResult.responseMessages[0].text.text[0];
-    console.log(`Response: ${answer}`);
+    const answer = response?.queryResult?.responseMessages?.[0]?.text?.text?.[0] || null;
     
     return answer;
   } catch (error) {
