@@ -9,7 +9,6 @@ async function handlePrivateMessage(bot, msg) {
   const { message_thread_id, chat } = msg;
   const chatId = chat.id;
   
-  console.log(`msg thread: ${message_thread_id}`);
   const answer = await knowledgeSearchService.getAnswer(userId, text);
   console.log(`answer: ${answer}`);
   
