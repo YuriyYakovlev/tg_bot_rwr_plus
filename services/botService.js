@@ -6,6 +6,11 @@ const mentionService = require("./mentionService");
 
 let bot;
 
+// Rate limit configuration
+const RATE_LIMIT_COUNT = 10;
+const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
+const userRequestTimestamps = new Map(); // { userId: [timestamps] }
+
 function startBotPolling(retryCount = 0) {
   const MAX_RETRIES = 5;
 
@@ -21,6 +26,18 @@ function startBotPolling(retryCount = 0) {
 
   bot.on("message", async (msg) => {
     try {
+      const userId = msg.from.id;
+
+      // Check rate limit for the user
+      if (isRateLimited(userId)) {
+        await bot.sendMessage(
+          msg.chat.id,
+          "Це експериментальний бот. Ви досягли ліміту запитів. Будь ласка, спробуйте ще раз через 15 хвилин."
+        );
+        return;
+      }
+
+      // Process the message normally
       if (msg.reply_to_message && msg.text && msg.text.includes(`${process.env.BOT_URL}`)) {
         await mentionService.handleMentionedMessage(bot, msg);
       } else if (msg.chat.type === "private") {
@@ -39,6 +56,22 @@ function startBotPolling(retryCount = 0) {
       handleRetry(retryCount, MAX_RETRIES);
     }
   });
+}
+
+// Helper function to handle rate limiting
+function isRateLimited(userId) {
+  const now = Date.now();
+  const timestamps = userRequestTimestamps.get(userId) || [];
+  const recentTimestamps = timestamps.filter(timestamp => now - timestamp < RATE_LIMIT_WINDOW_MS);
+  userRequestTimestamps.set(userId, recentTimestamps);
+  if (recentTimestamps.length >= RATE_LIMIT_COUNT) {
+    return true;
+  }
+
+  recentTimestamps.push(now);
+  userRequestTimestamps.set(userId, recentTimestamps);
+
+  return false;
 }
 
 function handleRetry(retryCount, maxRetries) {
