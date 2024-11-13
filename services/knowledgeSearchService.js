@@ -1,10 +1,10 @@
 // knowledgeSearchService.js
 const { SessionsClient } = require("@google-cloud/dialogflow-cx");
 
+const client = new SessionsClient();
 async function getAnswer(userId, msg) {
   const sessionId = userId || Math.random().toString(36).substring(7);
 
-  const client = new SessionsClient();
   const sessionPath = client.projectLocationAgentSessionPath(
       process.env.GOOGLE_PROJECT_ID,
       process.env.GOOGLE_PROJECT_LOCATION,
