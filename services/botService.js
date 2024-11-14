@@ -7,7 +7,7 @@ const mentionService = require("./mentionService");
 let bot;
 
 // Rate limit configuration
-const RATE_LIMIT_COUNT = 10;
+const RATE_LIMIT_COUNT = 15;
 const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
 const userRequestTimestamps = new Map(); // { userId: [timestamps] }
 
