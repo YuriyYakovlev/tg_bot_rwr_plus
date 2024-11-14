@@ -3,6 +3,7 @@ const TelegramBot = require("node-telegram-bot-api");
 
 const privateMessageService = require("./privateMessageService");
 const mentionService = require("./mentionService");
+const texts = require("../config/texts");
 
 let bot;
 
@@ -32,7 +33,7 @@ function startBotPolling(retryCount = 0) {
       if (isRateLimited(userId)) {
         await bot.sendMessage(
           msg.chat.id,
-          "Це експериментальний бот. Ви досягли ліміту запитів. Будь ласка, спробуйте ще раз через 15 хвилин."
+          texts.RATE_LIMITED
         );
         return;
       }
@@ -40,7 +41,7 @@ function startBotPolling(retryCount = 0) {
       let text = msg.text;
       if (text && text.includes(`@${process.env.BOT_URL}`)) {
         text = text.replace(`@${process.env.BOT_URL}`, '').trim();
-        
+
         await mentionService.handleMentionedMessage(bot, msg, text);
       } else if (msg.reply_to_message && msg.reply_to_message.from.username === process.env.BOT_URL) {
 

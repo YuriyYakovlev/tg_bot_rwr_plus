@@ -1,13 +1,22 @@
 // knowledgeSearchService.js
 const { SessionsClient } = require("@google-cloud/dialogflow-cx");
+const queryRefinementService = require("./queryRefinementService");
 
 const client = new SessionsClient();
-async function getAnswer(userId, msg) {
+async function getAnswer(userId, text) {
+
+  const refinedQuery = await queryRefinementService.refineQuery(text);
+  if(!refinedQuery) {
+    return null;
+  }
+
+  console.log(`refined query: ${refinedQuery}`);
+
   const sessionId = userId || Math.random().toString(36).substring(7);
 
   const sessionPath = client.projectLocationAgentSessionPath(
       process.env.GOOGLE_PROJECT_ID,
-      process.env.GOOGLE_PROJECT_LOCATION,
+      process.env.GOOGLE_AGENT_LOCATION,
       process.env.GOOGLE_AGENT_ID,
       sessionId
   );
@@ -15,7 +24,7 @@ async function getAnswer(userId, msg) {
   const request = {
     session: sessionPath,
     queryInput: {
-      text: { text: msg },
+      text: { text: refinedQuery },
       languageCode: process.env.GOOGLE_AGENT_LANGUAGE,
     },
   };
