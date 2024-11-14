@@ -1,15 +1,13 @@
 // mentionService.js
 const knowledgeSearchService = require("./knowledgeSearchService");
 
-async function handleMentionedMessage(bot, msg) {
+async function handleMentionedMessage(bot, msg, text) {
   const { message_thread_id, chat, reply_to_message } = msg;
   const chatId = chat.id;
-  const mentionedMessageText = reply_to_message.text;
-  const mentionedUserId = reply_to_message.from.id;
-  
+  const mentionedMessageText = text ? text : reply_to_message.text;
+
   if (mentionedMessageText) {
-    console.log(`mentioned message: ${mentionedMessageText}`);
-    const answer = await knowledgeSearchService.getAnswer(mentionedUserId, mentionedMessageText);
+    const answer = await knowledgeSearchService.getAnswer(msg.from.id, mentionedMessageText);
     console.log(`answer: ${answer}`);
    
     if (answer) {

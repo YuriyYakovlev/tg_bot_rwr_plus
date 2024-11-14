@@ -37,10 +37,16 @@ function startBotPolling(retryCount = 0) {
         return;
       }
 
-      // Process the message normally
-      if (msg.reply_to_message && msg.text && msg.text.includes(`${process.env.BOT_URL}`)) {
+      let text = msg.text;
+      if (text && text.includes(`@${process.env.BOT_URL}`)) {
+        text = text.replace(`@${process.env.BOT_URL}`, '').trim();
+        
+        await mentionService.handleMentionedMessage(bot, msg, text);
+      } else if (msg.reply_to_message && msg.reply_to_message.from.username === process.env.BOT_URL) {
+
         await mentionService.handleMentionedMessage(bot, msg);
       } else if (msg.chat.type === "private") {
+
         await privateMessageService.handlePrivateMessage(bot, msg);
       } 
     } catch (error) {
