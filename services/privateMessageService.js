@@ -11,7 +11,7 @@ async function handlePrivateMessage(bot, msg) {
   const { chat } = msg;
   const chatId = chat.id;
   
-  if(text) {
+  if(text && text !== "/start") {
     let answer = await knowledgeSearchService.getAnswer(userId, text);
     if (!answer) {
       answer = texts.NO_ANSWER;
