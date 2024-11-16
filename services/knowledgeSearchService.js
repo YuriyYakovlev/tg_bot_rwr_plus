@@ -4,14 +4,16 @@ const { SessionsClient } = require("@google-cloud/dialogflow-cx");
 
 const client = new SessionsClient();
 async function getAnswer(bot, chatId, userId, text) {
-  // bot.sendChatAction(chatId, "typing");
+  bot.sendChatAction(chatId, "typing");
   // const refinedQuery = await queryRefinementService.refineQuery(text);
   // if(!refinedQuery) {
   //   return null;
   // }
 
   // console.log(`refined query: ${refinedQuery}`);
-  bot.sendChatAction(chatId, "typing");
+  let typingInterval = setInterval(() => {
+    bot.sendChatAction(chatId, "typing");
+  }, 4000);
 
   const sessionId = userId || Math.random().toString(36).substring(7);
 
@@ -38,6 +40,8 @@ async function getAnswer(bot, chatId, userId, text) {
   } catch (error) {
     console.error('Error during Dialogflow process:', error);
     throw new Error(`Dialogflow request failed: ${error.message}`);
+  } finally {
+    clearInterval(typingInterval);
   }
 }
 
