@@ -10,7 +10,7 @@ async function handleMentionedMessage(bot, msg, text) {
   console.log(`from group chat: ${mentionedMessageText} `);
   if (mentionedMessageText) {
     bot.sendChatAction(chatId, "typing");
-    let answer = await knowledgeSearchService.getAnswer(msg.from.id, mentionedMessageText);
+    let answer = await knowledgeSearchService.getAnswer(bot, chatId, msg.from.id, mentionedMessageText);
     if (!answer) {
       answer = texts.NO_ANSWER;
     }
