@@ -1,16 +1,16 @@
 // knowledgeSearchService.js
 const { SessionsClient } = require("@google-cloud/dialogflow-cx");
-// const queryRefinementService = require("./queryRefinementService");
+const queryRefinementService = require("./queryRefinementService");
 
 const client = new SessionsClient();
 async function getAnswer(bot, chatId, userId, text) {
   bot.sendChatAction(chatId, "typing");
-  // const refinedQuery = await queryRefinementService.refineQuery(text);
-  // if(!refinedQuery) {
-  //   return null;
-  // }
+  const refinedQuery = await queryRefinementService.refineQuery(text);
+  if(!refinedQuery) {
+    return null;
+  }
 
-  // console.log(`refined query: ${refinedQuery}`);
+  console.log(`refined query: ${refinedQuery}`);
   let typingInterval = setInterval(() => {
     bot.sendChatAction(chatId, "typing");
   }, 4000);
